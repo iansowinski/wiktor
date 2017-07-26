@@ -1,13 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# Use text editor to edit the script and type in valid Instagram username/password
 
 from InstagramAPI import InstagramAPI
 import socket
-import os
-import os.path
-from datetime import datetime
 import getpass
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -28,10 +23,10 @@ while True:
     connection, client_address = server.accept()
     try:
         while True:
-            data = connection.recv(1024).decode('utf-8')
-            photo = "images/" + data + ".jpg"
-            if len(data) != 0:
-                api.uploadPhoto(photo,caption="test",upload_id=None)
+            filename = connection.recv(1024).decode('utf-8')
+            photo = "images/" + filename + ".jpg"
+            if len(filename) != 0:
+                api.uploadPhoto(photo,caption=filename,upload_id=None)
                 print "Uploaded!"
     finally:
         connection.close()
