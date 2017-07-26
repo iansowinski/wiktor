@@ -17,8 +17,12 @@ server.listen(1)
 login = raw_input("Instagram login: ")
 password = getpass.getpass("Instagram password: ")
 
+print "Logged in!"
+
 api = InstagramAPI.InstagramAPI(login, password)
 api.login()
+
+print "You are now free to start server.py by running `python3 server.py`"
 
 while True:
     connection, client_address = server.accept()
@@ -27,7 +31,7 @@ while True:
             data = connection.recv(1024).decode('utf-8')
             photo = "images/" + data + ".jpg"
             if len(data) != 0:
-                print(data)
                 api.uploadPhoto(photo,caption="test",upload_id=None)
+                print "Uploaded!"
     finally:
         connection.close()
