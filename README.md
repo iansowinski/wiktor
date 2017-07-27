@@ -1,9 +1,9 @@
 ## Wymagania
 
-
-Działa tylko na mac os sierra z zainstalowanym pythonem 2 i pythonem 3. wymaga [imagesnap](http://iharder.sourceforge.net/current/macosx/imagesnap/).
+Działa tylko na mac os sierra z zainstalowanym pythonem 2 i pythonem 3. Wymaga [imagesnap](http://iharder.sourceforge.net/current/macosx/imagesnap/).
 
 [Sterowniki](https://github.com/adrianmihalko/ch340g-ch34g-ch34x-mac-os-x-driver)
+
 [Arduino IDE](https://www.arduino.cc/en/Guide/ArduinoNano)
 
 pliki odpalamy w tej kolejności:
