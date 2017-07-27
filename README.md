@@ -6,6 +6,8 @@ Działa tylko na mac os sierra z zainstalowanym pythonem 2 i pythonem 3. Wymaga 
 
 [Arduino IDE](https://www.arduino.cc/en/Guide/ArduinoNano)
 
+[Instrukcja działania czujnika PIR](https://www.youtube.com/watch?v=63TR_3kn76U)
+
 pliki odpalamy w tej kolejności:
 
 1. `python uploader.py` - działa z pythonem 2 - należy zalogować się do instagrama i poczekać na komunikat.
@@ -16,5 +18,4 @@ Po wpisaniu przez użytkownika wiadomość o treści "True" w konsoli działają
 
 ## TODO:
 
-- arduino + czujniki
 - robienie zdjęć canonem z linii polecań
