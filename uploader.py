@@ -26,7 +26,7 @@ while True:
             filename = connection.recv(1024).decode('utf-8')
             photo = "images/" + filename + ".jpg"
             if len(filename) != 0:
-                api.uploadPhoto(photo,caption=filename,upload_id=None)
+                api.uploadPhoto(photo,caption="#PoliceBrutality",upload_id=None)
                 print "Uploaded!"
     finally:
         connection.close()
