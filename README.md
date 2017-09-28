@@ -1,23 +1,14 @@
 ## Wymagania
 
-Działa tylko na mac os sierra z zainstalowanym pythonem 2 i pythonem 3. Wymaga [imagesnap](http://iharder.sourceforge.net/current/macosx/imagesnap/).
+Działa tylko na mac os sierra z zainstalowanym pythonem 2 i go. Wymaga [imagesnap](http://iharder.sourceforge.net/current/macosx/imagesnap/).
 
-[PIR](https://forbot.pl/blog/kurs-arduino-ii-4-przerwania-kontaktron-czujnik-pir-id16792)
+- [Sterowniki](https://github.com/adrianmihalko/ch340g-ch34g-ch34x-mac-os-x-driver)
+- [Arduino IDE](https://www.arduino.cc/en/Guide/ArduinoNano)
+- [PIR](https://forbot.pl/blog/kurs-arduino-ii-4-przerwania-kontaktron-czujnik-pir-id16792)
+- [Instrukcja działania czujnika PIR](https://www.youtube.com/watch?v=63TR_3kn76U)
 
-[Sterowniki](https://github.com/adrianmihalko/ch340g-ch34g-ch34x-mac-os-x-driver)
+## Co jest czym
 
-[Arduino IDE](https://www.arduino.cc/en/Guide/ArduinoNano)
+`main.go` - po odpaleniu / skompilowaniu czyta z serialportu i w momencie gdy dostanie stringa "BANG!" odpala zdjęcie z kamerki w komputerze (`snap()`) oraz wysyła keystroke do odpowieniej aplikacji (do rozbudowania w `sendCommand()`). W założeniu również wysyła następnie zdjęcie na facebooka, lub sygnał do `uploader.py` za pomocą socketu tcp/ip)
 
-[Instrukcja działania czujnika PIR](https://www.youtube.com/watch?v=63TR_3kn76U)
-
-pliki odpalamy w tej kolejności:
-
-1. `python uploader.py` - działa z pythonem 2 - należy zalogować się do instagrama i poczekać na komunikat.
-2. `python3 server.py` - działa z pythonem 3 - należy poczekać na komunikat o gotowości.
-3. `python3 client.py` - działa z pythonem 3 - należy poczekać na komunikat o gotowości przed wpisaniem wiadomości.
-
-Po wpisaniu przez użytkownika wiadomość o treści "True" w konsoli działającego `client.py`, `server.py` odpala kamerkę i robi zdjęcie, przekazując nazwę zdjęcia do serwera `uploader.py`, który wstawia je na instagrama.
-
-## TODO:
-
-- robienie zdjęć canonem z linii polecań
+`uploader.py` - serwer który wrzuca zdjęcie gdy dostanie jego ścieżkę przez socket

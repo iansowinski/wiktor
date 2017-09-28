@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/tarm/serial"
+  "github.com/ahmdrz/goinsta"
 	"log"
 	"os"
 	"os/exec"
@@ -13,21 +14,37 @@ import (
 
 func main() {
 	whereIAm()
+
+  // Serialport settings
 	config := &serial.Config{Name: "/dev/cu.wchusbserial1410", Baud: 9600}
 	openedPort, err := serial.OpenPort(config)
 	if err != nil {
 		log.Fatal(err)
 	}
 	reader := bufio.NewReader(openedPort)
-	for true {
+  reader := bufio.NewReader(os.Stdin)
+  
+  // Instagram login
+  fmt.Print("Username: ")
+  username, _ := reader.ReadString('\n')
+  fmt.Print("Password: ")
+  password, _ := reader.ReadString('\n')
+	insta := goinsta.New(username, password)
+  if err := insta.Login(); err != nil {
+    panic(err)
+  }
+  // Main loop
+  for true {
 		data, _, err := reader.ReadLine()
 		if err != nil {
 			log.Fatal(err)
 		} else if string(data) == "BANG!" {
 			go snap()
-			go sendCommand()
+			// go sendCommand()
 		}
 	}
+
+  insta.Logout()
 }
 
 func pwd() string {
@@ -51,7 +68,7 @@ func whereIAm() {
 	fmt.Println("your output will be stored in:", pwd())
 }
 
-func snap() {
+func snap(insta *goinsta.Instagram) {
 	now := time.Now()
 	cmd := "imagesnap"
 	fileName := []string{now.Format("20060102150405"), ".jpg"}
@@ -61,4 +78,9 @@ func snap() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+  upload(insta, fileNameFormatted, int64(5))
+}
+
+func upload(insta *goinsta.Instagram, fileName string, uploadId int64) {
+  insta.UploadPhoto(fileName, "test", uploadId, 87, 0)
 }
