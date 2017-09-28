@@ -2,31 +2,33 @@ package main
 
 import (
 	"bufio"
+  "log"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
+  "github.com/tarm/serial"
 )
 
 func main() {
 	whereIAm()
-	commandCatcher()
+  config := &serial.Config{Name: "/dev/cu.wchusbserial1410", Baud: 9600}
+  s, err := serial.OpenPort(config)
+  if err != nil {
+      log.Fatal(err)
+  }
+  r := bufio.NewReader(s)
+  for true {
+    data, _, err := r.ReadLine()
+    if err != nil {
+        log.Fatal(err)
+    } else if string(data) == "BANG!" {
+      go snap()
+    }
+  }
 }
 
-func commandCatcher() {
-	reader := bufio.NewReader(os.Stdin)
-	for true {
-		fmt.Print("command: ")
-		text, _ := reader.ReadString('\n')
-		if text == "snap\n" {
-			go snap()
-		}
-		if text == "exit\n" {
-			break
-		}
-	}
-}
 
 func whereIAm() {
 	out, err := exec.Command("pwd").Output()
