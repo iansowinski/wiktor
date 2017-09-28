@@ -2,41 +2,53 @@ package main
 
 import (
 	"bufio"
-  "log"
 	"fmt"
+	"github.com/tarm/serial"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
-  "github.com/tarm/serial"
 )
 
 func main() {
 	whereIAm()
-  config := &serial.Config{Name: "/dev/cu.wchusbserial1410", Baud: 9600}
-  s, err := serial.OpenPort(config)
-  if err != nil {
-      log.Fatal(err)
-  }
-  r := bufio.NewReader(s)
-  for true {
-    data, _, err := r.ReadLine()
-    if err != nil {
-        log.Fatal(err)
-    } else if string(data) == "BANG!" {
-      go snap()
-    }
-  }
+	config := &serial.Config{Name: "/dev/cu.wchusbserial1410", Baud: 9600}
+	openedPort, err := serial.OpenPort(config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	reader := bufio.NewReader(openedPort)
+	for true {
+		data, _, err := reader.ReadLine()
+		if err != nil {
+			log.Fatal(err)
+		} else if string(data) == "BANG!" {
+			go snap()
+			go sendCommand()
+		}
+	}
 }
 
-
-func whereIAm() {
-	out, err := exec.Command("pwd").Output()
+func pwd() string {
+	output, err := exec.Command("pwd").Output()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	fmt.Printf("your output will be stored in: %s\n", out)
+	return string(output)
+}
+
+func sendCommand() {
+	_, err := exec.Command("osascript", "-e", "tell application \"Google Chrome\"\nactivate\ntell application \"System Events\"\nkeystroke \"r\" using {command down}\nend tell\nend tell").Output()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
+func whereIAm() {
+	fmt.Println("your output will be stored in:", pwd())
 }
 
 func snap() {
