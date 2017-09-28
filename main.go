@@ -12,7 +12,12 @@ import (
 	"time"
 )
 
+// Global counter for uploadId
+var uploadsCounter int
+
 func main() {
+
+  uploadsCounter = 1
 	whereIAm()
 
   // Serialport settings
@@ -22,13 +27,13 @@ func main() {
 		log.Fatal(err)
 	}
 	reader := bufio.NewReader(openedPort)
-  reader := bufio.NewReader(os.Stdin)
   
   // Instagram login
+  passReader := bufio.NewReader(os.Stdin)
   fmt.Print("Username: ")
-  username, _ := reader.ReadString('\n')
+  username, _ := passReader.ReadString('\n')
   fmt.Print("Password: ")
-  password, _ := reader.ReadString('\n')
+  password, _ := passReader.ReadString('\n')
 	insta := goinsta.New(username, password)
   if err := insta.Login(); err != nil {
     panic(err)
@@ -39,11 +44,11 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		} else if string(data) == "BANG!" {
-			go snap()
-			// go sendCommand()
+			go snap(insta)
+			go sendCommand()
 		}
 	}
-
+  
   insta.Logout()
 }
 
@@ -78,7 +83,8 @@ func snap(insta *goinsta.Instagram) {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-  upload(insta, fileNameFormatted, int64(5))
+  upload(insta, fileNameFormatted, int64(uploadsCounter))
+  uploadsCounter++
 }
 
 func upload(insta *goinsta.Instagram, fileName string, uploadId int64) {
