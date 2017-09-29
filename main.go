@@ -12,6 +12,11 @@ import (
 	"time"
 )
 
+// TODO:
+// - arduino_controler.c - should be refactored and PIR should work better
+// - sendCommand() - should return full filename of created photo
+// - upload() - should send correct description
+
 // Global counter for uploadId
 var uploadsCounter int
 
@@ -62,11 +67,17 @@ func pwd() string {
 }
 
 func sendCommand() {
-  _, err := exec.Command("osascript", "-e", "tell application \"System Events\"\ntell process \"Capture One\"\nset frontmost to true\nend tell\nkeystroke \"k\" using {command down}\nend tell").Output()
-  if err != nil {
-    fmt.Fprintln(os.Stderr, err)
-    os.Exit(1)
-  }
+	script := `tell application "System Events"
+  tell process "Capture One"
+  set frontmost to true
+  end tell
+  keystroke "k" using {command down}
+  end tell`
+	_, err := exec.Command("osascript", "-e", script).Output()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }
 
 func whereIAm() {
