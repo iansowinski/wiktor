@@ -45,7 +45,7 @@ func main() {
 			log.Fatal(err)
 		} else if string(data) == "BANG!" {
 			go snap(insta)
-			go sendCommand()
+			// go sendCommand() //this will send ⌘+k to capture one
 		}
 	}
 
@@ -62,11 +62,11 @@ func pwd() string {
 }
 
 func sendCommand() {
-	_, err := exec.Command("osascript", "-e", "tell application \"Google Chrome\"\nactivate\ntell application \"System Events\"\nkeystroke \"r\" using {command down}\nend tell\nend tell").Output()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+  _, err := exec.Command("osascript", "-e", "tell application \"System Events\"\ntell process \"Capture One\"\nset frontmost to true\nend tell\nkeystroke \"k\" using {command down}\nend tell").Output()
+  if err != nil {
+    fmt.Fprintln(os.Stderr, err)
+    os.Exit(1)
+  }
 }
 
 func whereIAm() {
