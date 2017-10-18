@@ -66,9 +66,9 @@ func pwd() string {
 	return string(output)
 }
 
-func sendCommand() {
+func sendCommand() { //"Capture One 10" on Capture One 10
 	script := `tell application "System Events"
-  tell process "Capture One"
+  tell process "Capture One" 
   set frontmost to true
   end tell
   keystroke "k" using {command down}
@@ -87,7 +87,7 @@ func whereIAm() {
 func snap(insta *goinsta.Instagram) {
 	now := time.Now()
 	cmd := "imagesnap"
-	fileName := []string{now.Format("20060102150405"), ".jpg"}
+	fileName := []string{now.Format("20060102150405"), ".jpg"} //Files from capture one are stored in Pictures/Capture One Catalog.cocatalog/Orginals/2017/MM/D
 	fileNameFormatted := strings.Join(fileName, "")
 	args := []string{"-w", "1", fileNameFormatted}
 	if err := exec.Command(cmd, args...).Run(); err != nil {

@@ -5,7 +5,7 @@ long unsigned int pause = 500;
 boolean lockLow = true;
 boolean takeLowTime; 
  
-int pirPin = 7;
+int pirPin = 4;
 
 void setup(){
   Serial.begin(9600);
@@ -20,13 +20,11 @@ void setup(){
 }
 
 void loop() {
-  if(digitalRead(pirPin) == HIGH){
-      digitalWrite(LED_BUILTIN, HIGH);
+  if(digitalRead(pirPin) == LOW){
       delay(100);
-      Serial.println("BANG!");
   }
   else {
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(100);   
+      Serial.println("BANG!");
+      delay(100);
   }
 }
