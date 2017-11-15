@@ -12,15 +12,12 @@ import (
 	"time"
 )
 
-// Global counter for uploadId
 var uploadsCounter int
 
 func main() {
 
 	uploadsCounter = 1
-	whereIAm()
 
-	// Serialport settings
 	config := &serial.Config{Name: "/dev/cu.usbmodem1411", Baud: 9600}
 	openedPort, err := serial.OpenPort(config)
 	if err != nil {
@@ -28,7 +25,6 @@ func main() {
 	}
 	reader := bufio.NewReader(openedPort)
 
-	// Instagram login
 	passReader := bufio.NewReader(os.Stdin)
 	fmt.Print("Username: ")
 	username, _ := passReader.ReadString('\n')
@@ -38,33 +34,23 @@ func main() {
 	if err := insta.Login(); err != nil {
 		panic(err)
 	}
-	// Main loop
+
 	for true {
 		data, _, err := reader.ReadLine()
 		if err != nil {
 			log.Fatal(err)
 		} else if string(data) == "BANG!" {
-			fileName := capturePhoto() //this will send ⌘+k to capture one
-			// fmt.Println(fileName)
+			fileName := capturePhoto()
 			time.Sleep(1000 * time.Millisecond)
 			go upload(insta, fileName)
-			time.Sleep(60000 * time.Millisecond)
+			time.Sleep(30000 * time.Millisecond)
 		}
 	}
 
 	insta.Logout()
 }
 
-func pwd() string {
-	output, err := exec.Command("pwd").Output()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-	return string(output)
-}
-
-func capturePhoto() string{
+func capturePhoto() string {
 	timeStamp := time.Now().Format("200601021504")
 	script := `tell application "System Events"
   tell process "Capture One 10" 
@@ -79,10 +65,6 @@ func capturePhoto() string{
 	}
 	fileName := []string{"foto/", "", timeStamp, ".JPG"}
 	return strings.Join(fileName, "")
-}
-
-func whereIAm() {
-	fmt.Println("your output will be stored in:", pwd())
 }
 
 func upload(insta *goinsta.Instagram, fileName string) {
