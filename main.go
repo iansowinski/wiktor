@@ -12,11 +12,6 @@ import (
 	"time"
 )
 
-// TODO:
-// - arduino_controler.c - should be refactored and PIR should work better
-// - sendCommand() - should return full filename of created photo
-// - upload() - should send correct description
-
 // Global counter for uploadId
 var uploadsCounter int
 
@@ -26,7 +21,7 @@ func main() {
 	whereIAm()
 
 	// Serialport settings
-	config := &serial.Config{Name: "/dev/cu.wchusbserial1410", Baud: 9600}
+	config := &serial.Config{Name: "/dev/cu.usbmodem1411", Baud: 9600}
 	openedPort, err := serial.OpenPort(config)
 	if err != nil {
 		log.Fatal(err)
@@ -49,8 +44,11 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		} else if string(data) == "BANG!" {
-			go snap(insta)
-			// go sendCommand() //this will send ⌘+k to capture one
+			fileName := capturePhoto() //this will send ⌘+k to capture one
+			// fmt.Println(fileName)
+			time.Sleep(1000 * time.Millisecond)
+			go upload(insta, fileName)
+			time.Sleep(60000 * time.Millisecond)
 		}
 	}
 
@@ -66,9 +64,10 @@ func pwd() string {
 	return string(output)
 }
 
-func sendCommand() { //"Capture One 10" on Capture One 10
+func capturePhoto() string{
+	timeStamp := time.Now().Format("200601021504")
 	script := `tell application "System Events"
-  tell process "Capture One" 
+  tell process "Capture One 10" 
   set frontmost to true
   end tell
   keystroke "k" using {command down}
@@ -78,26 +77,15 @@ func sendCommand() { //"Capture One 10" on Capture One 10
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+	fileName := []string{"foto/", "", timeStamp, ".JPG"}
+	return strings.Join(fileName, "")
 }
 
 func whereIAm() {
 	fmt.Println("your output will be stored in:", pwd())
 }
 
-func snap(insta *goinsta.Instagram) {
-	now := time.Now()
-	cmd := "imagesnap"
-	fileName := []string{now.Format("20060102150405"), ".jpg"} //Files from capture one are stored in Pictures/Capture One Catalog.cocatalog/Orginals/2017/MM/D
-	fileNameFormatted := strings.Join(fileName, "")
-	args := []string{"-w", "1", fileNameFormatted}
-	if err := exec.Command(cmd, args...).Run(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-	upload(insta, fileNameFormatted, int64(uploadsCounter))
+func upload(insta *goinsta.Instagram, fileName string) {
+	insta.UploadPhoto(fileName, "test", int64(uploadsCounter), 87, 0)
 	uploadsCounter++
-}
-
-func upload(insta *goinsta.Instagram, fileName string, uploadId int64) {
-	insta.UploadPhoto(fileName, "test", uploadId, 87, 0)
 }
